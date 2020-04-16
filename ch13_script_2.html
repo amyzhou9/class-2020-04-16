@@ -436,7 +436,7 @@ rf_fit &lt;- fit(rf_mod,
 rf_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  2.5s 
+## Fit time:  3.3s 
 ## 
 ## Call:
 ##  randomForest(x = as.data.frame(x), y = y) 
@@ -444,11 +444,11 @@ rf_fit</code></pre>
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 2
 ## 
-##         OOB estimate of  error rate: 25.3%
+##         OOB estimate of  error rate: 25.34%
 ## Confusion matrix:
 ##            Republican Democrat class.error
-## Republican       3284      453   0.1212202
-## Democrat         1230     1686   0.4218107</code></pre>
+## Republican       3283      454   0.1214878
+## Democrat         1232     1684   0.4224966</code></pre>
 </div>
 <div id="scene-4" class="section level1">
 <h1>Scene 4</h1>
@@ -460,6 +460,30 @@ rf_fit</code></pre>
 <li><p>Is accuracy the metric to use? Would using sensitivity or specificity be more appropriate?</p></li>
 </ol>
 <p>Note: Accuracy = (Actual 1 as 1 + Actual 0 as 0) / n Sensitivity = The proportion of actual 1s classified as 1 Specificity = The proportion of actual 0s classified as 0</p>
+<pre class="r"><code>nes_preds &lt;- nes %&gt;%
+  mutate(logistic = predict(logistic_fit, new_data = nes) %&gt;% pull(.pred_class),
+         cart = predict(cart_fit, new_data = nes) %&gt;% pull(.pred_class),
+         rf = predict(rf_fit, new_data = nes) %&gt;% pull(.pred_class))
+
+nes_preds %&gt;%
+  filter(! (cart == rf)) %&gt;% 
+  select(gender, income, vote, logistic, cart, rf) %&gt;%
+  sample_n(5)</code></pre>
+<pre><code>## # A tibble: 5 x 6
+##   gender income vote       logistic cart       rf      
+##   &lt;fct&gt;   &lt;int&gt; &lt;fct&gt;      &lt;fct&gt;    &lt;fct&gt;      &lt;fct&gt;   
+## 1 female      3 Democrat   Democrat Republican Democrat
+## 2 female      3 Democrat   Democrat Republican Democrat
+## 3 male        2 Republican Democrat Republican Democrat
+## 4 female      3 Republican Democrat Republican Democrat
+## 5 male        3 Democrat   Democrat Republican Democrat</code></pre>
+<pre class="r"><code>tibble(logistic = mean(nes_preds$logistic == nes_preds$vote),
+       tree = mean(nes_preds$cart == nes_preds$vote),
+       forest = mean(nes_preds$rf == nes_preds$vote))</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   logistic  tree forest
+##      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1    0.745 0.743  0.749</code></pre>
 </div>
 <div id="challenge-problem" class="section level1">
 <h1>Challenge Problem</h1>
