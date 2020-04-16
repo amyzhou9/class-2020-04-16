@@ -425,6 +425,30 @@ cart_fit$fit %&gt;%
 <p>Print out and interpret the model.</p>
 <p>How many trees did the forest use? Would we get better results if we used a different number of trees?</p>
 <p>What is OOB error?</p>
+<pre class="r"><code>rf_mod &lt;- rand_forest() %&gt;%
+  set_engine(&quot;randomForest&quot;) %&gt;%
+  set_mode(&quot;classification&quot;)
+
+rf_fit &lt;- fit(rf_mod,
+              vote ~ ideology + income + gender + race,
+              data = nes)
+
+rf_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  2.5s 
+## 
+## Call:
+##  randomForest(x = as.data.frame(x), y = y) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 2
+## 
+##         OOB estimate of  error rate: 25.3%
+## Confusion matrix:
+##            Republican Democrat class.error
+## Republican       3284      453   0.1212202
+## Democrat         1230     1686   0.4218107</code></pre>
 </div>
 <div id="scene-4" class="section level1">
 <h1>Scene 4</h1>

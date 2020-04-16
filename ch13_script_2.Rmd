@@ -109,6 +109,17 @@ How many trees did the forest use? Would we get better results if we used a diff
 
 What is OOB error?
 
+```{r}
+rf_mod <- rand_forest() %>%
+  set_engine("randomForest") %>%
+  set_mode("classification")
+
+rf_fit <- fit(rf_mod,
+              vote ~ ideology + income + gender + race,
+              data = nes)
+
+rf_fit
+```
 
 
 # Scene 4
