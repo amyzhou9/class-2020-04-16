@@ -50,6 +50,21 @@ Interpret the coefficient of `income`.
 
 Write a sentence to your smart-but-not-mathematical boss which explains the association of income with preference for the Democratic candidate. Include a notion of uncertainty.
 
+```{r scene_1}
+logistic_mod <- logistic_reg() %>%
+  set_engine("glm")
+
+logistic_fit <- fit(logistic_mod,
+                    vote ~ ideology + income + gender + race,
+                    data = nes)
+
+logistic_fit %>%
+  tidy(conf.int = TRUE) %>%
+  select(term, estimate, conf.low, conf.high)
+
+```
+
+Sentence: "If we divide the US population into 5 income categories and compare people in two adjoining buckets, say the 3s and the 4s, then the richer people are about 5% less likely to prefer the Democratic candidate, all else equal, but it might be as low as 4% or as high as 7%."
 
 
 # Scene 2
@@ -65,6 +80,19 @@ Plot the fitted model. You may find the `prp()` function to be useful. I like `e
 Write two sentences explaining to your smart-but-not-mathematical boss what the model means and how he should interpret it. Make sure to discuss why some variables, like gender, are not used in the model. He thinks that gender matters to voting!
 
 Optional: Can you write a simple dplr pipe which does, more or less, what the CART is doing, at least for the first node, and then confirms the numbers in the plot?
+
+```{r scene_2}
+cart_mod <- decision_tree() %>%
+  set_engine("rpart", model = TRUE) %>%
+  set_mode("classification")
+
+cart_fit <- fit(cart_mod,
+                    vote ~ ideology + income + gender + race,
+                    data = nes)
+
+cart_fit$fit %>%
+  prp(extra = 6)
+```
 
 
 
